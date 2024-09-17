@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-deployment
+  namespace: default
+  labels:
+    app: green-deployment
+spec:
+  selector:
+    matchLabels:
+      app: green-deployment
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: green-deployment
+    spec:
+      containers:
+      - name: green-deployment-container
+        image: adamtravis/rollouts:green
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: green-deployment-service
+  labels:
+    app: green-deployment
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    nodePort: 32000
+  selector:
+    app: green-deployment
+  type: NodePort

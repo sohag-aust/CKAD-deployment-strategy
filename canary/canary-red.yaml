@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-red
+  namespace: default
+  labels:
+    app: canary-red
+spec:
+  selector:
+    matchLabels:
+      app: canary-red
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: canary-red
+    spec:
+      containers:
+      - name: canary-red-container
+        image: adamtravis/rollouts:red
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary-red-service
+  labels:
+    app: canary-red
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    nodePort: 31000
+  selector:
+    app: canary-red
+  type: NodePort

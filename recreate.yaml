@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recreate-demo-blue
+  namespace: default
+  labels:
+    app: recreate-strategy
+spec:
+  selector:
+    matchLabels:
+      app: recreate-strategy
+  replicas: 2
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: recreate-strategy
+    spec:
+      containers:
+      - name: recreate-container
+        image: adamtravis/rollouts:orange
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recreate-type-service
+  labels:
+    app: recreate-strategy
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    nodePort: 31000
+  selector:
+    app: recreate-strategy
+  type: NodePort

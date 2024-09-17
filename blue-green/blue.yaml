@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-deployment
+  namespace: default
+  labels:
+    app: blue-deployment
+spec:
+  selector:
+    matchLabels:
+      app: blue-deployment
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: blue-deployment
+    spec:
+      containers:
+      - name: blue-deployment-container
+        image: adamtravis/rollouts:blue
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blue-deployment-service
+  labels:
+    app: blue-deployment
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    nodePort: 31000
+  selector:
+    app: blue-deployment
+  type: NodePort

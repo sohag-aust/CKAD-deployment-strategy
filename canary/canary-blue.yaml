@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-blue
+  namespace: default
+  labels:
+    app: canary-blue
+spec:
+  selector:
+    matchLabels:
+      app: canary-blue
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: canary-blue
+    spec:
+      containers:
+      - name: canary-blue-container
+        image: adamtravis/rollouts:blue
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary-blue-service
+  labels:
+    app: canary-blue
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    nodePort: 31000
+  selector:
+    app: canary-blue
+  type: NodePort
