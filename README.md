@@ -69,4 +69,5 @@
 
 
     eta akta manual process jodio evabe production e kaj kora thik na.
-    will try how manually we can do it ?
+    will try how automatically we can do it ?
+    ans : we can do canary by setting percentage by using ISTIO
